@@ -1,0 +1,32 @@
+{
+  "name": "rahul-image-processing-api",
+  "version": "1.0.0",
+  "description": "shell-nd project-1 (Image processing api)",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --ignore-path .gitignore . --ext .ts",
+    "format": "prettier --ignore-path .gitignore \"**/*.+(js|ts|json)\"  --write",
+    "build": "npx tsc",
+    "validate": "npm run lint && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rahul Singh Bhadauria",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jasmine": "^4.0.3",
+    "@types/node": "^18.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
+    "@typescript-eslint/parser": "^5.30.6",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "jasmine": "^4.2.1",
+    "jasmine-spec-reporter": "^7.0.0",
+    "prettier": "^2.7.1",
+    "supertest": "^6.2.4",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "sharp": "^0.30.7"
+  }
+}

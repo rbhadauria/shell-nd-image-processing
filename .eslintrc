@@ -1,0 +1,20 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2019,
+    "sourceType": "module"
+  },
+  "extends": ["eslint:recommended", "eslint-config-prettier"],
+  "env": { "node": true },
+  "overrides": [
+    {
+      "files": "**/*.+(ts)",
+      "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint/eslint-plugin"],
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+        "eslint-config-prettier/@typescript-eslint"
+      ]
+    }
+  ]
+}
