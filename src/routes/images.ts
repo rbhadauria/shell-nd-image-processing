@@ -1,10 +1,25 @@
-import {Router, Request, Response} from 'express';
-import cache from '../middlewares/cacheMiddleware';
+import {Router, Response} from 'express';
+import {promises as fsPromises} from 'fs';
+import getThumbsFilePath from '../helper';
 import {resizeImage} from '../services/imageService';
+import {ImageResizeRequest} from './types';
 
 const imageRoutes = Router();
 
-const resizeHandler = async (req: Request, res: Response) => {
+const doesThumbExists = async (filePath: string): Promise<boolean> => {
+  try {
+    //check if file exists in thumbs dir
+    await fsPromises.stat(filePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const resizeHandler = async (
+  req: ImageResizeRequest,
+  res: Response
+): Promise<Response | void> => {
   try {
     const {filename, height, width} = req.query;
     if (!filename) {
@@ -14,16 +29,21 @@ const resizeHandler = async (req: Request, res: Response) => {
       return res.status(400).send('height and width are required');
     }
 
-    const resizedImagePath = await resizeImage(
-      filename as string,
-      parseInt(height as string),
-      parseInt(width as string)
-    );
-
-    return res.sendFile(resizedImagePath);
-  } catch (err: unknown) {
+    const thumbsFilePath = getThumbsFilePath(filename, height, width);
+    if (await doesThumbExists(thumbsFilePath)) {
+      console.log(`returning from cache`);
+      return res.sendFile(thumbsFilePath);
+    } else {
+      await resizeImage(
+        filename,
+        typeof height === 'string' ? parseInt(height) : height,
+        typeof width === 'string' ? parseInt(width) : width,
+        thumbsFilePath
+      );
+      return res.sendFile(thumbsFilePath);
+    }
+  } catch (err) {
     const typedErr = err as Error;
-    console.log(`${typedErr.message}`);
     if (typedErr.message.includes('Input file is missing')) {
       return res.status(404).send(typedErr.message);
     } else {
@@ -32,6 +52,6 @@ const resizeHandler = async (req: Request, res: Response) => {
   }
 };
 
-imageRoutes.get('/', cache, resizeHandler);
+imageRoutes.get('/', resizeHandler);
 
 export default imageRoutes;
